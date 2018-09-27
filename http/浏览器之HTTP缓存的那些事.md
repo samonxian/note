@@ -42,7 +42,7 @@
 
 流程图只考虑了200和304的状态码，其他异常状态码不考虑。
 
-![浏览器缓存流程](https://dog-days.github.io/demo/static/browser-cache-flow.svg?test=2)
+![浏览器缓存流程](https://dog-days.github.io/demo/static/browser-cache-flow.svg)
 
 ## 缓存相关的Http Header
 
@@ -121,7 +121,7 @@ ETag和If-None-Match是一对:
 
 ## Nginx实例
 
-用实例来说明，Nginx的安装和使用请自行网上学习，例子的环境是在Mac系统运行的，然后在谷歌上访问（不同浏览器的表现会有点不一样的，而且浏览器还有快捷键直接刷新跳过缓存的）。
+用实例来说明，Nginx的安装和使用请自行网上学习，例子的环境是在Mac系统运行的，然后在**谷歌浏览器**上访问（不同浏览器的表现会有点不一样的，而且浏览器还有快捷键直接刷新跳过缓存的）。
 
 **注意：**nginx在没有设置`Cache-Control：max-age=xxx`和`expires`时，谷歌访问后，后面会变成200(from memory cache)，然后就造成了文件修改后无法更新的问题（不知道什么时候过期）。这个也很好解决，只要设置过期时间为0，这样就一定不是强缓存，就不存在这些问题。
 
@@ -175,12 +175,15 @@ server {
 
 **首次访问 Http Header**(先清理缓存，才算首次访问)
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 200 OK
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=0
 Connection: keep-alive
 Content-Encoding: gzip
@@ -191,6 +194,8 @@ Expires: Thu, 27 Sep 2018 03:21:00 GMT
 Last-Modified: Wed, 26 Sep 2018 12:27:34 GMT
 Server: nginx/1.10.1
 Transfer-Encoding: chunked
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -202,12 +207,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 **第二次访问 Http Header**（无修改）
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 304 Not Modified
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=0
 Connection: keep-alive
 Date: Thu, 27 Sep 2018 03:23:22 GMT
@@ -215,6 +223,8 @@ ETag: "5bab7b36-15"
 Expires: Thu, 27 Sep 2018 03:23:22 GMT
 Last-Modified: Wed, 26 Sep 2018 12:27:34 GMT
 Server: nginx/1.10.1
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -228,12 +238,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 **第三次访问 Http Header**（有修改）
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 200 OK
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=0
 Connection: keep-alive
 Content-Encoding: gzip
@@ -244,6 +257,8 @@ Expires: Thu, 27 Sep 2018 03:25:14 GMT
 Last-Modified: Thu, 27 Sep 2018 03:25:12 GMT
 Server: nginx/1.10.1
 Transfer-Encoding: chunked
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -257,12 +272,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 **第四次访问 Http Header**（无修改）
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 304 Not Modified
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=0
 Connection: keep-alive
 Date: Thu, 27 Sep 2018 03:26:46 GMT
@@ -270,6 +288,8 @@ ETag: "5bac4d98-15"
 Expires: Thu, 27 Sep 2018 03:26:46 GMT
 Last-Modified: Thu, 27 Sep 2018 03:25:12 GMT
 Server: nginx/1.10.1
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -308,12 +328,15 @@ server {
 
 **首次访问 Http Header**（先清理缓存，才算首次）
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 200 OK
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=30
 Connection: keep-alive
 Content-Encoding: gzip
@@ -324,6 +347,8 @@ Expires: Thu, 27 Sep 2018 03:28:33 GMT
 Last-Modified: Thu, 27 Sep 2018 03:25:12 GMT
 Server: nginx/1.10.1
 Transfer-Encoding: chunked
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -335,12 +360,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 **第二次访问 Http Header**（不能过期，上面设置的是30秒，要在上次访问的30秒内再次访问）
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 200 OK (from memory cache)
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=30
 Connection: keep-alive
 Content-Encoding: gzip
@@ -351,6 +379,8 @@ Expires: Thu, 27 Sep 2018 03:28:33 GMT
 Last-Modified: Thu, 27 Sep 2018 03:25:12 GMT
 Server: nginx/1.10.1
 Transfer-Encoding: chunked
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -362,12 +392,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 **第三次访问 Http Header**（需要过期，上面设置的是30秒，上一次访问等待30秒后访问）
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 304 Not Modified
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=30
 Connection: keep-alive
 Date: Thu, 27 Sep 2018 03:32:44 GMT
@@ -375,6 +408,8 @@ ETag: "5bac4d98-15"
 Expires: Thu, 27 Sep 2018 03:33:14 GMT
 Last-Modified: Thu, 27 Sep 2018 03:25:12 GMT
 Server: nginx/1.10.1
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -390,12 +425,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 访问获取的还是旧文件，文件虽然修改了，但是浏览器直接缓存中获取，没发出请求，无法获取最新的内容。
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 200 OK (from memory cache)
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=30
 Connection: keep-alive
 Content-Encoding: gzip
@@ -405,6 +443,8 @@ ETag: W/"5bac4d98-15"
 Expires: Thu, 27 Sep 2018 03:28:33 GMT
 Last-Modified: Thu, 27 Sep 2018 03:25:12 GMT
 Server: nginx/1.10.1
+
+#请求头
 Transfer-Encoding: chunked
 Accept: */*
 Accept-Encoding: gzip, deflate, br
@@ -419,12 +459,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 访问后获取到了最新文件。
 
-```nginx
+```sh
+#通用的header
 Request URL: http://localhost/test.js
 Request Method: GET
 Status Code: 200 OK
 Remote Address: 127.0.0.1:80
 Referrer Policy: no-referrer-when-downgrade
+
+#响应头
 Cache-Control: max-age=30
 Connection: keep-alive
 Content-Encoding: gzip
@@ -435,6 +478,8 @@ Expires: Thu, 27 Sep 2018 03:37:21 GMT
 Last-Modified: Thu, 27 Sep 2018 03:34:36 GMT
 Server: nginx/1.10.1
 Transfer-Encoding: chunked
+
+#请求头
 Accept: */*
 Accept-Encoding: gzip, deflate, br
 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
@@ -480,7 +525,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
 
 ### 解决方式
 
-- 请求添加随机数
+- Url添加随机数
 
   这种情况，是前端做处理。
 
@@ -489,6 +534,28 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (
   为了兼容http1.0，而外添加`Pragma: no-cache`，Cache-Control的选项有很多，具体如何选择，看场景。
 
   前端或者服务端都可以处理。
+
+## 一些说明
+
+做一些补充说明。
+
+### memory cache 和 disk cache
+
+这个两个说明是谷歌浏览器的状态吗附加提示语，内存缓存和磁盘缓存。这两个其实完全可以理解为缓存，其实就是这个很简单理解，只要页面在网页上打开访问，然后不关闭，刷新的一定是`from memory cache`，而页面关闭在打开一定是`from disk cache`。这是浏览器自身的缓存手段，磁盘缓存一定会有一份备份的，同时如果页面访问的时候会在内存中缓存一份，这样刷新当前页面就不会读取硬盘，而是直接内存中获取（减少访问磁盘的次数）。
+
+### 不同浏览器的一些表现差异
+
+不同浏览器的缓存手段是一致的，但是文案展现形式，和刷新页面的方式会有差异（如火狐浏览器点击刷新按钮和回车刷新是不一样的）。
+
+下面是针对已经**强缓存**，同时访问文件无修改的情况下，不同刷新方式返回的**状态码总结**（mac系统）：
+
+| 浏览器 | 点击地址栏刷新按钮       | 回车刷新                 | cmd + r刷新              |
+| ------ | ------------------------ | ------------------------ | ------------------------ |
+| 谷歌   | 200（from memory cache） | 200（from memory cache） | 200（from memory cache） |
+| 火狐   | 304                      | 200，其他地方说明已缓存  | 304                      |
+| safari | 200，其他地方说明已缓存  | 200，其他地方说明已缓存  | 200，其他地方说明已缓存  |
+
+这里只说明下可能会遇到的疑惑。浏览器软件自身的处理方式，跟http缓存挂不上钩，我们也无法处理。
 
 ## 参考文章
 
